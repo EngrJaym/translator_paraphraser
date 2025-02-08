@@ -1,0 +1,151 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>WordShift</title>
+</head>
+<body>
+
+    <div class="container">
+        <h2>WordShift</h2>
+        
+        <nav>
+            <button onclick="switchMode('translator')">
+                <i class="fas fa-language"></i> Translator
+            </button>
+            <button onclick="switchMode('summarizer')">
+                <i class="fas fa-file-alt"></i> Paraphraser
+            </button>
+        </nav>
+
+        <div id="translator" class="content active">                                       
+            <h3>Translator</h3>
+            <div class="mb-3">
+                <label for="languageSelect" class="form-label">Select Language:</label>
+                <select class="form-select" id="languageSelect">
+                    <option value="en-tl">English → Filipino</option>
+                    <option value="tl-en">Filipino → English</option>
+                    <option value="en-es">English → Spanish</option>
+                    <option value="es-en">Spanish → English</option>
+                    <option value="en-fr">English → French</option>
+                    <option value="fr-en">French → English</option>
+                    <option value="en-de">English → German</option>
+                    <option value="de-en">German → English</option>
+                    <option value="en-zh">English → Chinese</option>
+                    <option value="zh-en">Chinese → English</option>
+                    <option value="en-ja">English → Japanese</option>
+                    <option value="ja-en">Japanese → English</option>
+                    <option value="en-ko">English → Korean</option>
+                    <option value="ko-en">Korean → English</option>
+                </select>
+            </div>
+    
+            <textarea id="inputText" placeholder="Enter text to translate..."></textarea>
+            <button onclick="translateText()">
+                <i class="fas fa-arrow-right"></i> Translate
+            </button>
+            <textarea id="outputText" placeholder="Translated text appears here..." readonly></textarea>
+        </div>
+
+        <div id="summarizer" class="content">
+            <h3>Paraphraser</h3>
+            <textarea id="inputSummaryText" placeholder="Enter text to summarize..."></textarea>
+            <div class="range-container">
+                <label for="summaryRange">Text Length: </label>
+                <input type="range" id="summaryRange" min="1" max="3" value="2" step="1" onchange="updateSummaryLabel()">
+                <span id="summaryRangeValue">Medium</span>
+            </div>
+            <button onclick="summarizeText()">
+                <i class="fas fa-sync-alt"></i> Paraphrase
+            </button>
+            <textarea id="outputSummaryText" placeholder="Summarized text appears here..." readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        function switchMode(mode) {
+            document.getElementById("translator").classList.remove("active");
+            document.getElementById("summarizer").classList.remove("active");
+
+            if (mode === 'translator') {
+                document.getElementById("translator").classList.add("active");
+            } else if (mode === 'summarizer') {
+                document.getElementById("summarizer").classList.add("active");
+            }
+        }
+
+        function translateText() {
+            let inputText = document.getElementById("inputText").value.trim();
+            let language = document.getElementById("languageSelect").value;
+            if (!inputText) {
+                document.getElementById("outputText").value = "Please enter text to translate.";
+                return;
+            }
+
+            fetch("{% url 'translate_api' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ text: inputText, translation: language })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("outputText").value = data.translation;
+        })
+        .catch(error => {
+            document.getElementById("outputText").value = "Error processing request.";
+            console.error("Error:", error);
+        });
+
+            let outputText = "Translated: " + inputText; 
+            document.getElementById("outputText").value = outputText;
+        }
+
+        function summarizeText() {
+        let inputText = document.getElementById("inputSummaryText").value.trim();
+        let rangeValue = document.getElementById("summaryRange").value;
+
+        if (!inputText) {
+            document.getElementById("outputSummaryText").value = "Please enter text to summarize.";
+            return;
+        }
+
+        let summaryLength = rangeValue == 1 ? "short" : rangeValue == 2 ? "medium" : "detailed";
+
+        fetch("{% url 'paraphrase_api' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ text: inputText, summary_length: summaryLength })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("outputSummaryText").value = data.summary;
+        })
+        .catch(error => {
+            document.getElementById("outputSummaryText").value = "Error processing request.";
+            console.error("Error:", error);
+        });
+    }
+
+        function updateSummaryLabel() {
+            let rangeValue = document.getElementById("summaryRange").value;
+            let rangeLabel = rangeValue == 1 ? "Short" : rangeValue == 2 ? "Medium" : "Detailed";
+            document.getElementById("summaryRangeValue").textContent = rangeLabel;
+        }
+
+        updateSummaryLabel();
+    </script>
+
+</body>
+</html>

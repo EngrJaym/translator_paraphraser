@@ -47,7 +47,7 @@
             </div>
     
             <textarea id="inputText" placeholder="Enter text to translate..."></textarea>
-            <button onclick="translateText()">
+            <button onclick="translateText()" class="mb-3 w-100">
                 <i class="fas fa-arrow-right"></i> Translate
             </button>
             <textarea id="outputText" placeholder="Translated text appears here..." readonly></textarea>
@@ -55,16 +55,16 @@
 
         <div id="summarizer" class="content">
             <h3>Paraphraser</h3>
-            <textarea id="inputSummaryText" placeholder="Enter text to summarize..."></textarea>
+            <textarea id="inputSummaryText" placeholder="Enter text to paraphrase..."></textarea>
             <div class="range-container">
                 <label for="summaryRange">Text Length: </label>
                 <input type="range" id="summaryRange" min="1" max="3" value="2" step="1" onchange="updateSummaryLabel()">
                 <span id="summaryRangeValue">Medium</span>
             </div>
-            <button onclick="summarizeText()">
+            <button onclick="summarizeText()" class="my-3 w-100">
                 <i class="fas fa-sync-alt"></i> Paraphrase
             </button>
-            <textarea id="outputSummaryText" placeholder="Summarized text appears here..." readonly></textarea>
+            <textarea id="outputSummaryText" placeholder="Paraphrased text appears here..." readonly></textarea>
         </div>
     </div>
 
@@ -104,9 +104,7 @@
             document.getElementById("outputText").value = "Error processing request.";
             console.error("Error:", error);
         });
-
-            let outputText = "Translated: " + inputText; 
-            document.getElementById("outputText").value = outputText;
+            document.getElementById("outputText").value = "Translating...";
         }
 
         function summarizeText() {
@@ -136,6 +134,7 @@
             document.getElementById("outputSummaryText").value = "Error processing request.";
             console.error("Error:", error);
         });
+            document.getElementById("outputSummaryText").value = "Paraphrasing...";
     }
 
         function updateSummaryLabel() {

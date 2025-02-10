@@ -28,7 +28,7 @@ def paraphrase_api(request):
                 return JsonResponse({"summary": "Minimum number of input text to be summarized is 30."})
             
             else:
-                length_map = {"short": round(word_count/6), "medium": round(word_count/2), "detailed": round(word_count/1.2)}
+                length_map = {"short": round(word_count/6), "medium": round(word_count/2), "detailed": round(word_count/0.8)}
                 desired_word_count = length_map.get(summary_length, 100)
                 print(word_count, desired_word_count)
                 if not input_text:

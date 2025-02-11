@@ -13,7 +13,18 @@
 <body>
 
     <div class="container">
-        <h2>WordShift</h2>
+        <div class="row">
+            <div class="col-4">
+                <a class="navbar-brand">
+                    <img src="{% static 'logo.png'%}" width="100px" height="100px" class="inline align-top" alt="Logo">
+                </a>
+            </div>
+            <div class="col-4 d-flex align-items-center justify-content-center">
+                <h2 class="h2">WordShift</h2>
+            </div>
+            <div class="col-4"></div>
+        </div>
+        
         
         <nav>
             <button onclick="switchMode('translator')">
@@ -37,12 +48,6 @@
                     <option value="fr-en">French → English</option>
                     <option value="en-de">English → German</option>
                     <option value="de-en">German → English</option>
-                    <option value="en-zh">English → Chinese</option>
-                    <option value="zh-en">Chinese → English</option>
-                    <option value="en-ja">English → Japanese</option>
-                    <option value="ja-en">Japanese → English</option>
-                    <option value="en-ko">English → Korean</option>
-                    <option value="ko-en">Korean → English</option>
                 </select>
             </div>
     

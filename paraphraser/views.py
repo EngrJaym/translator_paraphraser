@@ -4,7 +4,7 @@ from transformers import pipeline
 import json
 import re
 
-paraphraser = pipeline("text2text-generation", model="google/flan-t5-large")
+paraphraser = pipeline("text2text-generation", model="google/flan-t5-base")
 
 def showParaphraser(request):
     return render(request, 'index.html')
